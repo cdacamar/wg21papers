@@ -3,12 +3,21 @@ Title: The Equality Operator You Are Looking For
 Shortname: pxxxx
 Revision: 0
 Date: 2020-06-18
-Editor: Cameron DaCamara, Microsoft, cadacama@microsoft.com
+Editor: Barry Revzin, barry.revzin@gmail.com
+Editor: Bjarne Stroustrup, bjarne@stroustrup.com
+Editor: Cameron DaCamara, cadacama@microsoft.com
+Editor: Daveed Vandevoorde, daveed@edg.com
+Editor: Gabriel Dos Reis, gdr@microsoft.com
+Editor: Herb Sutter, hsutter@microsoft.com
+Editor: Jason Merrill, jason@redhat.com
+Editor: Jonathan Caves, joncaves@microsoft.com
+Editor: Richard Smith, richardsmith@google.com
+Editor: Ville Voutilainen, ville.voutilainen@gmail.com
 Abstract: This paper details some changes to make rewriting equality in expressions less of a breaking change
 
 Status: D
 Group: wg21
-Audience: CWG
+Audience: EWG
 URL: http://wg21.link/pxxxxr0
 Markup Shorthands: markdown yes
 </pre>
@@ -338,18 +347,3 @@ the templated `operator==` is considered to be a worse match based on
 <a href="http://eel.is/c%2B%2Bdraft/over.match#best.general-2.4">`[over.match.best.general]/2.4`</a>
 which is a tiebreaker before rewritten candidate tiebreakers, which makes `operator==(const U& u, const S& s)`
 the best match for the comparison `s == u`.
-
-Acknowledgements
-==================================
-
-We would like to thank the following individuals for their contributions during the discussion of
-the approaches and help with identifying common offending code patterns in the open source testing:
-
-* Barry Revzin
-* Bjarne Stroustrup
-* Daveed Vandevoorde
-* Gabriel Dos Reis
-* Herb Sutter
-* Jason Merrill
-* Jonathan Caves
-* Ville Voutilainen
