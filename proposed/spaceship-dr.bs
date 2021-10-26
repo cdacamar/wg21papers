@@ -1,6 +1,6 @@
 <pre class='metadata'>
 Title: The Equality Operator You Are Looking For
-Shortname: pxxxx
+Shortname: P2468R0
 Revision: 0
 Date: 2020-06-18
 Editor: Barry Revzin, barry.revzin@gmail.com
@@ -15,10 +15,10 @@ Editor: Richard Smith, richardsmith@google.com
 Editor: Ville Voutilainen, ville.voutilainen@gmail.com
 Abstract: This paper details some changes to make rewriting equality in expressions less of a breaking change
 
-Status: D
+Status: P
 Group: wg21
 Audience: EWG
-URL: http://wg21.link/pxxxxr0
+URL: http://wg21.link/p2468r0
 Markup Shorthands: markdown yes
 </pre>
 
@@ -250,7 +250,19 @@ standardization.
 Wording
 ==================================
 
-* TODO
+Change in 12.2.2.3 [over.match.oper] paragraph 3:
+
+> The rewritten candidate set is determined as follows:
+> * For the relational ([expr.rel]) operators, the rewritten candidates include all non-rewritten candidates for the expression x <=> y.
+> * For the relational ([expr.rel]) and three-way comparison ([expr.spaceship]) operators, the rewritten candidates also include a synthesized candidate, with the order of the two parameters reversed, for each non-rewritten candidate for the expression y <=> x.
+> * For the != operator ([expr.eq]), the rewritten candidates include all non-rewritten candidates for the expression x == y.
+> * For the equality operators, the rewritten candidates also include a synthesized candidate, with the order of the two parameters reversed, for each non-rewritten candidate for the expression y == x.
+>
+> * <ins>For any rewritten operator candidate, if there exists another candidate with the same signature declared in the same scope and that candidate is a non-rewritten candidate then the rewritten candiate is removed from the candidate set.</ins>
+>
+> * For all other operators, the rewritten candidate set is empty.
+
+> [Note 2: A candidate synthesized from a member candidate has its implicit object parameter as the second parameter, thus implicit conversions are considered for the first, but not for the second, parameter. — end note]
 
 Appendix
 ==================================

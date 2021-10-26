@@ -2,7 +2,7 @@
  <head>
   <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
   <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
-  <title>pxxxxR0: The Equality Operator You Are Looking For</title>
+  <title>P2468R0R0: The Equality Operator You Are Looking For</title>
 <style data-fill-with="stylesheet">/******************************************************************************
  *                   Style sheet for the W3C specifications                   *
  *
@@ -12,7 +12,7 @@
  *   - .toc for the Table of Contents (<ol class="toc">)
  *     + <span class="secno"> for the section numbers
  *   - #toc for the Table of Contents (<nav id="toc">)
- *   - ul.index for Indices (<a href="#ref">term</a><span>, in §N.M</span>)
+ *   - ul.index for Indices (<a href="#ref">term</a><span>, in § N.M</span>)
  *   - table.index for Index Tables (e.g. for properties or elements)
  *
  * Structural Markup
@@ -368,8 +368,8 @@
 /** Subheadings ***************************************************************/
 
 	h1 + h2,
-	#subtitle {
-		/* #subtitle is a subtitle in an H2 under the H1 */
+	#profile-and-date {
+		/* #profile-and-date is a subtitle in an H2 under the H1 */
 		margin-top: 0;
 	}
 	h2 + h3,
@@ -583,34 +583,27 @@
 	a[href] {
 		color: #034575;
 		color: var(--a-normal-text);
-		text-decoration: none;
-		border-bottom: 1px solid #707070;
-		border-bottom: 1px solid var(--a-normal-underline);
-		/* Need a bit of extending for it to look okay */
-		padding: 0 1px 0;
-		margin: 0 -1px 0;
+		text-decoration: underline #707070;
+		text-decoration: underline var(--a-normal-underline);
+		text-decoration-skip-ink: none;
 	}
 	a:visited {
 		color: #034575;
 		color: var(--a-visited-text);
-		border-bottom-color: #bbb;
-		border-bottom-color: var(--a-visited-underline);
+		text-decoration-color: #bbb;
+		text-decoration-color: var(--a-visited-underline);
 	}
 
-	/* Use distinguishing colors when user is interacting with the link */
+	/* Indicate interaction with the link */
 	a[href]:focus,
 	a[href]:hover {
-		background: #f8f8f8;
-		background: rgba(75%, 75%, 75%, .25);
-		background: var(--a-hover-bg);
-		border-bottom-width: 3px;
-		margin-bottom: -2px;
+		text-decoration-thickness: 2px;
 	}
 	a[href]:active {
 		color: #c00;
 		color: var(--a-active-text);
-		border-color: #c00;
-		border-color: var(--a-active-underline);
+		text-decoration-color: #c00;
+		text-decoration-color: var(--a-active-underline);
 	}
 
 	/* Backout above styling for W3C logo */
@@ -1116,9 +1109,12 @@ Possible extra rowspan handling
 
 	.toc a {
 		/* More spacing; use padding to make it part of the click target. */
-		padding-top: 0.1rem;
+		padding: 0.1rem 1px 0;
 		/* Larger, more consistently-sized click target */
 		display: block;
+		/* Switch to using border-bottom for underlines */
+		text-decoration: none;
+		border-bottom: 1px solid;
 		/* Reverse color scheme */
 		color: black;
 		color: var(--toclink-text);
@@ -1130,6 +1126,13 @@ Possible extra rowspan handling
 		color: var(--toclink-visited-text);
 		border-color: #054572;
 		border-color: var(--toclink-visited-underline);
+	}
+	.toc a:focus,
+	.toc a:hover {
+		background: rgba(75%, 75%, 75%, .25);
+		background: var(--a-hover-bg);
+		border-bottom-width: 3px;
+		margin-bottom: -2px;
 	}
 	.toc a:not(:focus):not(:hover) {
 		/* Allow colors to cascade through from link styling */
@@ -1557,8 +1560,8 @@ Possible extra rowspan handling
     blockquote c-[vi] { color: inherit; } /* Name.Variable.Instance */
     blockquote c-[il] { color: inherit; } /* Literal.Number.Integer.Long */
   </style>
-  <meta content="Bikeshed version c5172e83, updated Fri Nov 20 15:35:20 2020 -0800" name="generator">
-  <link href="http://wg21.link/pxxxxr0" rel="canonical">
+  <meta content="Bikeshed version d7036035b, updated Fri Oct 8 17:07:11 2021 -0700" name="generator">
+  <link href="http://wg21.link/p2468r0" rel="canonical">
   <link href="https://isocpp.org/favicon.ico" rel="icon">
 <style>/* style-autolinks */
 
@@ -1666,9 +1669,9 @@ pre .property::before, pre .property::after {
     --ins-bg: transparent;
 
     --a-normal-text: #034575;
-    --a-normal-underline: #707070;
+    --a-normal-underline: #bbb;
     --a-visited-text: var(--a-normal-text);
-    --a-visited-underline: #bbb;
+    --a-visited-underline: #707070;
     --a-hover-bg: rgba(75%, 75%, 75%, .25);
     --a-active-text: #c00;
     --a-active-underline: #c00;
@@ -1760,6 +1763,16 @@ figcaption {
 figcaption:not(.no-marker)::before {
     content: "Figure " counter(figure) " ";
 }</style>
+<style>/* style-issues */
+
+a[href].issue-return {
+    float: right;
+    float: inline-end;
+    color: var(--issueheading-text);
+    font-weight: bold;
+    text-decoration: none;
+}
+</style>
 <style>/* style-md-lists */
 
 /* This is a weird hack for me not yet following the commonmark spec
@@ -2068,12 +2081,12 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
  <body class="h-entry">
   <div class="head">
    <p data-fill-with="logo"></p>
-   <h1 class="p-name no-ref" id="title">pxxxxR0<br>The Equality Operator You Are Looking For</h1>
-   <h2 class="no-num no-toc no-ref heading settled" id="subtitle"><span class="content">Draft Proposal, <time class="dt-updated" datetime="2020-06-18">2020-06-18</time></span></h2>
+   <h1 class="p-name no-ref" id="title">P2468R0R0<br>The Equality Operator You Are Looking For</h1>
+   <h2 class="no-num no-toc no-ref heading settled" id="profile-and-date"><span class="content">Published Proposal, <time class="dt-updated" datetime="2020-06-18">2020-06-18</time></span></h2>
    <div data-fill-with="spec-metadata">
     <dl>
      <dt>This version:
-     <dd><a class="u-url" href="http://wg21.link/pxxxxr0">http://wg21.link/pxxxxr0</a>
+     <dd><a class="u-url" href="http://wg21.link/p2468r0">http://wg21.link/p2468r0</a>
      <dt class="editor">Authors:
      <dd class="editor p-author h-card vcard"><a class="p-name fn u-email email" href="mailto:barry.revzin@gmail.com">Barry Revzin</a>
      <dd class="editor p-author h-card vcard"><a class="p-name fn u-email email" href="mailto:bjarne@stroustrup.com">Bjarne Stroustrup</a>
@@ -2129,7 +2142,7 @@ c-[il] { color: #000000 } /* Literal.Number.Integer.Long */
   <main>
    <h2 class="heading settled" data-level="1" id="rewritten-equality-inequality-in-expressions"><span class="secno">1. </span><span class="content">Rewritten equality/inequality in expressions</span><a class="self-link" href="#rewritten-equality-inequality-in-expressions"></a></h2>
    <h3 class="heading settled" data-level="1.1" id="compiler-disagreements"><span class="secno">1.1. </span><span class="content">Compiler disagreements</span><a class="self-link" href="#compiler-disagreements"></a></h3>
-<pre class="language-c++ highlight"><c- k>struct</c-> <c- n>S</c-> <c- p>{</c->
+<pre class="language-c++ highlight"><c- k>struct</c-> <c- nc>S</c-> <c- p>{</c->
   <c- b>bool</c-> <c- n>operator</c-><c- o>==</c-><c- p>(</c-><c- k>const</c-> <c- n>S</c-><c- o>&amp;</c-><c- p>)</c-> <c- p>{</c-> <c- k>return</c-> true<c- p>;</c-> <c- p>}</c-> <c- c1>// The non-const member is important here.</c->
   <c- b>bool</c-> <c- n>operator</c-><c- o>!=</c-><c- p>(</c-><c- k>const</c-> <c- n>S</c-><c- o>&amp;</c-><c- p>)</c-> <c- p>{</c-> <c- k>return</c-> false<c- p>;</c-> <c- p>}</c-> <c- c1>// The non-const member is important here.</c->
 <c- p>};</c->
@@ -2146,7 +2159,7 @@ intended tiebreaker step <a href="http://eel.is/c%2B%2Bdraft/over.match#general-
 the best conversions step we discover that the candidate <code class="highlight"><c- k>operator</c-><c- o>!=</c-><c- p>(</c-><c- k>const</c-> <c- n>S</c-><c- o>&amp;</c-><c- p>)</c-></code> and
 rewritten candidate <code class="highlight"><c- k>operator</c-><c- o>==</c-><c- p>(</c-><c- k>const</c-> <c- n>S</c-><c- o>&amp;</c-><c- p>)</c-></code> are equally as good as each other.  To
 the compiler, it is as if the user had written:</p>
-<pre class="language-c++ highlight"><c- k>struct</c-> <c- n>S</c-> <c- p>{</c->
+<pre class="language-c++ highlight"><c- k>struct</c-> <c- nc>S</c-> <c- p>{</c->
   <c- n>friend</c-> <c- b>bool</c-> <c- n>f</c-><c- p>(</c-><c- n>S</c-><c- p>,</c-> <c- k>const</c-> <c- n>S</c-><c- o>&amp;</c-><c- p>)</c-> <c- p>{</c-> <c- p>...</c-> <c- p>}</c->
   <c- n>friend</c-> <c- b>bool</c-> <c- n>f</c-><c- p>(</c-><c- k>const</c-> <c- n>S</c-><c- o>&amp;</c-><c- p>,</c-> <c- n>S</c-><c- p>)</c-> <c- p>{</c-> <c- p>...</c-> <c- p>}</c->
 <c- p>};</c->
@@ -2172,12 +2185,12 @@ of the new overload resolution rules can be.</p>
       <td>20 
    </table>
    <p>Many of the failures are caused by the first code sample mentioned.  Other failures include:</p>
-<pre class="language-c++ highlight"><c- n>template</c-> <c- o>&lt;</c-><c- kr>typename</c-> <c- n>T</c-><c- o>></c->
-<c- k>struct</c-> <c- n>Base</c-> <c- p>{</c->
+<pre class="language-c++ highlight"><c- n>template</c-> <c- o>&lt;</c-><c- n>typename</c-> <c- n>T</c-><c- o>></c->
+<c- k>struct</c-> <c- nc>Base</c-> <c- p>{</c->
   <c- b>bool</c-> <c- n>operator</c-><c- o>==</c-><c- p>(</c-><c- k>const</c-> <c- n>T</c-><c- o>&amp;</c-><c- p>)</c-> <c- k>const</c-><c- p>;</c->
 <c- p>};</c->
 
-<c- k>struct</c-> <c- nl>Derived</c-> <c- p>:</c-> <c- n>Base</c-><c- o>&lt;</c-><c- n>Derived</c-><c- o>></c-> <c- p>{</c-> <c- p>};</c->
+<c- k>struct</c-> <c- nc>Derived</c-> <c- o>:</c-> <c- n>Base</c-><c- o>&lt;</c-><c- n>Derived</c-><c- o>></c-> <c- p>{</c-> <c- p>};</c->
 
 <c- b>bool</c-> <c- n>b</c-> <c- o>=</c-> <c- n>Derived</c-><c- p>{}</c-> <c- o>==</c-> <c- n>Derived</c-><c- p>{};</c->
 </pre>
@@ -2188,7 +2201,7 @@ regular candidate and the synthesized candidate contain a derived-to-base conver
 one not strictly better than the other.</p>
    <p>We feel that the code above should be <strong>accepted</strong>.</p>
 <pre class="language-c++ highlight"><c- n>template</c-> <c- o>&lt;</c-><c- b>bool</c-><c- o>></c->
-<c- k>struct</c-> <c- n>GenericIterator</c-> <c- p>{</c->
+<c- k>struct</c-> <c- nc>GenericIterator</c-> <c- p>{</c->
   <c- n>using</c-> <c- n>ConstIterator</c-> <c- o>=</c-> <c- n>GenericIterator</c-><c- o>&lt;</c->true<c- o>></c-><c- p>;</c->
   <c- n>using</c-> <c- n>NonConstIterator</c-> <c- o>=</c-> <c- n>GenericIterator</c-><c- o>&lt;</c->false<c- o>></c-><c- p>;</c->
   <c- n>GenericIterator</c-><c- p>()</c-> <c- o>=</c-> <c- k>default</c-><c- p>;</c->
@@ -2204,7 +2217,7 @@ one not strictly better than the other.</p>
 comparisons being compared as a <code class="highlight"><c- n>ConstIterator</c-></code>.  The issue is that the converting constructor enables
 conversions on both sides which are no better than the other when considering the reversed candidate.</p>
    <p>We feel that the code above should be <strong>accepted</strong>.</p>
-<pre class="language-c++ highlight"><c- k>struct</c-> <c- n>Iterator</c-> <c- p>{</c->
+<pre class="language-c++ highlight"><c- k>struct</c-> <c- nc>Iterator</c-> <c- p>{</c->
   <c- n>Iterator</c-><c- p>();</c->
   <c- n>Iterator</c-><c- p>(</c-><c- b>int</c-><c- o>*</c-><c- p>);</c->
   <c- b>bool</c-> <c- n>operator</c-><c- o>==</c-><c- p>(</c-><c- k>const</c-> <c- n>Iterator</c-><c- o>&amp;</c-><c- p>)</c-> <c- k>const</c-><c- p>;</c->
@@ -2220,8 +2233,8 @@ a case where it is not a better choice than the reversed parameter candidate rew
 case we should <strong>reject</strong> despite being observed in two different projects.</p>
 <pre class="language-c++ highlight"><c- n>using</c-> <c- n>ubool</c-> <c- o>=</c-> <c- b>unsigned</c-> <c- b>char</c-><c- p>;</c->
 
-<c- k>struct</c-> <c- n>S</c-> <c- p>{</c->
-  <c- n>operator</c-> <c- b>bool</c-><c- p>()</c-> <c- k>const</c-><c- p>;</c->
+<c- k>struct</c-> <c- nc>S</c-> <c- p>{</c->
+  <c- n>operator</c-> <c- nf>bool</c-><c- p>()</c-> <c- k>const</c-><c- p>;</c->
 <c- p>};</c->
 <c- n>ubool</c-> <c- n>operator</c-><c- o>==</c-><c- p>(</c-><c- n>S</c-><c- p>,</c-> <c- n>S</c-><c- p>);</c->
 
@@ -2294,31 +2307,48 @@ around comparing viable candidates for rewriting.</p>
    <p>Based on the results and the principled approach of the latter rule we propose this resolution for
 standardization.</p>
    <h2 class="heading settled" data-level="2" id="wording"><span class="secno">2. </span><span class="content">Wording</span><a class="self-link" href="#wording"></a></h2>
-   <ul>
-    <li data-md>
-     <p>TODO</p>
-   </ul>
+   <p>Change in 12.2.2.3 [over.match.oper] paragraph 3:</p>
+   <blockquote>
+    <p>The rewritten candidate set is determined as follows:</p>
+    <ul>
+     <li data-md>
+      <p>For the relational ([expr.rel]) operators, the rewritten candidates include all non-rewritten candidates for the expression x &lt;=> y.</p>
+     <li data-md>
+      <p>For the relational ([expr.rel]) and three-way comparison ([expr.spaceship]) operators, the rewritten candidates also include a synthesized candidate, with the order of the two parameters reversed, for each non-rewritten candidate for the expression y &lt;=> x.</p>
+     <li data-md>
+      <p>For the != operator ([expr.eq]), the rewritten candidates include all non-rewritten candidates for the expression x == y.</p>
+     <li data-md>
+      <p>For the equality operators, the rewritten candidates also include a synthesized candidate, with the order of the two parameters reversed, for each non-rewritten candidate for the expression y == x.</p>
+     <li data-md>
+      <ins>For any rewritten operator candidate, if there exists another candidate with the same signature declared in the same scope and that candidate is a non-rewritten candidate then the rewritten candiate is removed from the candidate set.</ins>
+     <li data-md>
+      <p>For all other operators, the rewritten candidate set is empty.</p>
+    </ul>
+   </blockquote>
+   <blockquote>
+    <p>[Note 2: A candidate synthesized from a member candidate has its implicit object parameter as the second parameter, thus implicit conversions are considered for the first, but not for the second, parameter. — end note]</p>
+   </blockquote>
    <h2 class="heading settled" data-level="3" id="appendix"><span class="secno">3. </span><span class="content">Appendix</span><a class="self-link" href="#appendix"></a></h2>
    <h3 class="heading settled" data-level="3.1" id="code-patterns-which-fail-to-compile-even-under-new-rules"><span class="secno">3.1. </span><span class="content">Code patterns which fail to compile even under new rules</span><a class="self-link" href="#code-patterns-which-fail-to-compile-even-under-new-rules"></a></h3>
 <pre class="language-c++ highlight"><c- n>template</c-><c- o>&lt;</c-><c- n>class</c-> <c- n>Derived</c-><c- o>></c->
-<c- k>struct</c-> <c- n>Base</c-> <c- p>{</c->
+<c- k>struct</c-> <c- nc>Base</c-> <c- p>{</c->
   <c- b>int</c-> <c- n>operator</c-><c- o>==</c-><c- p>(</c-><c- k>const</c-> <c- b>double</c-><c- o>&amp;</c-><c- p>)</c-> <c- k>const</c-><c- p>;</c->
   <c- n>friend</c-> <c- kr>inline</c-> <c- b>int</c-> <c- n>operator</c-><c- o>==</c-><c- p>(</c-><c- k>const</c-> <c- b>double</c-><c- o>&amp;</c-><c- p>,</c-> <c- k>const</c-> <c- n>Derived</c-><c- o>&amp;</c-><c- p>);</c->
   <c- b>int</c-> <c- n>operator</c-><c- o>!=</c-><c- p>(</c-><c- k>const</c-> <c- b>double</c-><c- o>&amp;</c-><c- p>)</c-> <c- k>const</c-><c- p>;</c->
   <c- n>friend</c-> <c- kr>inline</c-> <c- b>int</c-> <c- n>operator</c-><c- o>!=</c-><c- p>(</c-><c- k>const</c-> <c- b>double</c-><c- o>&amp;</c-><c- p>,</c-> <c- k>const</c-> <c- n>Derived</c-><c- o>&amp;</c-><c- p>);</c->
 <c- p>};</c->
 
-<c- k>struct</c-> <c- nl>X</c-> <c- p>:</c-> <c- n>Base</c-><c- o>&lt;</c-><c- n>X</c-><c- o>></c-> <c- p>{</c-> <c- p>};</c->
+<c- k>struct</c-> <c- nc>X</c-> <c- o>:</c-> <c- n>Base</c-><c- o>&lt;</c-><c- n>X</c-><c- o>></c-> <c- p>{</c-> <c- p>};</c->
 
 <c- b>bool</c-> <c- n>b</c-> <c- o>=</c-> <c- n>X</c-><c- p>{}</c-> <c- o>==</c-> <c- mf>0.</c-><c- p>;</c->
 </pre>
    <p>Fails due to requirements of rewritten operator returning <em>cv</em>-<code class="highlight"><c- b>bool</c-></code>.</p>
-<pre class="language-c++ highlight"><c- k>struct</c-> <c- n>Base</c-> <c- p>{</c->
+<pre class="language-c++ highlight"><c- k>struct</c-> <c- nc>Base</c-> <c- p>{</c->
     <c- b>bool</c-> <c- n>operator</c-><c- o>==</c-><c- p>(</c-><c- k>const</c-> <c- n>Base</c-><c- o>&amp;</c-><c- p>)</c-> <c- k>const</c-><c- p>;</c->
     <c- b>bool</c-> <c- n>operator</c-><c- o>!=</c-><c- p>(</c-><c- k>const</c-> <c- n>Base</c-><c- o>&amp;</c-><c- p>)</c-> <c- k>const</c-><c- p>;</c->
 <c- p>};</c->
 
-<c- k>struct</c-> <c- nl>Derived</c-> <c- p>:</c-> <c- n>Base</c-> <c- p>{</c->
+<c- k>struct</c-> <c- nc>Derived</c-> <c- o>:</c-> <c- n>Base</c-> <c- p>{</c->
     <c- n>Derived</c-><c- p>(</c-><c- k>const</c-> <c- n>Base</c-><c- o>&amp;</c-><c- p>);</c->
     <c- b>bool</c-> <c- n>operator</c-><c- o>==</c-><c- p>(</c-><c- k>const</c-> <c- n>Derived</c-><c- o>&amp;</c-> <c- n>rhs</c-><c- p>)</c-> <c- k>const</c-> <c- p>{</c->
         <c- k>return</c-> <c- n>static_cast</c-><c- o>&lt;</c-><c- k>const</c-> <c- n>Base</c-><c- o>&amp;></c-><c- p>(</c-><c- o>*</c-><c- n>this</c-><c- p>)</c-> <c- o>==</c-> <c- n>rhs</c-><c- p>;</c->
@@ -2337,13 +2367,13 @@ compared.</p>
    <p>In C++20, because of how candidate sets are expanded there are a few scenarios where a new candidate
 introduced is then selected as the best candidate without any code change.  In many cases this can
 be fine but there are a few cases we identified as being potentially problematic for code authors.</p>
-<pre class="language-c++ highlight"><c- k>struct</c-> <c- n>iterator</c-><c- p>;</c->
-<c- k>struct</c-> <c- n>const_iterator</c-> <c- p>{</c->
+<pre class="language-c++ highlight"><c- k>struct</c-> <c- nc>iterator</c-><c- p>;</c->
+<c- k>struct</c-> <c- nc>const_iterator</c-> <c- p>{</c->
   <c- n>const_iterator</c-><c- p>(</c-><c- k>const</c-> <c- n>iterator</c-><c- o>&amp;</c-><c- p>);</c->
   <c- b>bool</c-> <c- n>operator</c-><c- o>==</c-><c- p>(</c-><c- k>const</c-> <c- n>const_iterator</c-> <c- o>&amp;</c-><c- n>ci</c-><c- p>)</c-> <c- k>const</c-><c- p>;</c->
 <c- p>};</c->
 
-<c- k>struct</c-> <c- n>iterator</c-> <c- p>{</c->
+<c- k>struct</c-> <c- nc>iterator</c-> <c- p>{</c->
   <c- b>bool</c-> <c- n>operator</c-><c- o>==</c-><c- p>(</c-><c- k>const</c-> <c- n>const_iterator</c-> <c- o>&amp;</c-><c- n>ci</c-><c- p>)</c-> <c- k>const</c-> <c- p>{</c-> <c- k>return</c-> <c- n>ci</c-> <c- o>==</c-> <c- o>*</c-><c- n>this</c-><c- p>;</c-> <c- p>}</c->
 <c- p>};</c->
 </pre>
@@ -2352,10 +2382,10 @@ same comparison is the (rewritten) function <code class="highlight"><c- n>iterat
 reversed parameter order rule.  The chosen function in C++20 causes a new runtime failure where the
 comparison will cause infinite recursion where there wasn’t one before.</p>
    <p>Another example:</p>
-<pre class="language-c++ highlight"><c- k>struct</c-> <c- n>U</c-> <c- p>{</c-> <c- p>};</c->
+<pre class="language-c++ highlight"><c- k>struct</c-> <c- nc>U</c-> <c- p>{</c-> <c- p>};</c->
 
-<c- k>struct</c-> <c- n>S</c-> <c- p>{</c->
-  <c- n>template</c-> <c- o>&lt;</c-><c- kr>typename</c-> <c- n>T</c-><c- o>></c->
+<c- k>struct</c-> <c- nc>S</c-> <c- p>{</c->
+  <c- n>template</c-> <c- o>&lt;</c-><c- n>typename</c-> <c- n>T</c-><c- o>></c->
   <c- n>friend</c-> <c- b>bool</c-> <c- n>operator</c-><c- o>==</c-><c- p>(</c-><c- k>const</c-> <c- n>S</c-><c- o>&amp;</c-><c- p>,</c-> <c- k>const</c-> <c- n>T</c-><c- o>&amp;</c-><c- p>)</c-> <c- p>{</c-> <c- k>return</c-> true<c- p>;</c-> <c- p>}</c->
 
   <c- n>friend</c-> <c- b>bool</c-> <c- n>operator</c-><c- o>==</c-><c- p>(</c-><c- k>const</c-> <c- n>U</c-><c- o>&amp;</c-> <c- n>u</c-><c- p>,</c-> <c- k>const</c-> <c- n>S</c-><c- o>&amp;</c-> <c- n>s</c-><c- p>)</c-> <c- p>{</c->
