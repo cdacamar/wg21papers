@@ -254,6 +254,31 @@ Where the type does not define a corresponding `operator!=` to disable the rewri
 Based on the results and the principled approach of the latter rule we propose this resolution for
 standardization.
 
+Programming Model
+==================================
+
+With proposal suggested in "Second resolution" the programming model for C++20 becomes:
+
+* If you want an `operator==` that is used for rewrites (automatically reversed, and `!=` automatically
+    generated), write only an `operator==`, and make sure its return type is `bool`.
+* If you want an `operator==` that is not used for rewrites, write both an `operator==` and a matching
+    `operator!=`.
+* `operator<=>` is always used for rewrites (from `<`, `<=`, `>`, `>=`); if you don't want rewrites, don't
+    write an `operator<=>`.
+
+For migration:
+
+* To keep the behavior the same, make sure every `operator==` has a matching `operator!=`.
+* Once you're happy for rewrites to start being performed, remove the `operator!=`.
+
+Surprises and caveats:
+
+* If you have an `operator==` with no matching `operator!=`, *and* you migrate from C++17 to C++20, *and* your
+    `operator==` is not symmetric (either intentionally or accidentally -- usually due to a missing `const`),
+    *and* you use an `==` or `!=` in a way where the rewritten form of that operator is a better match, then you can
+    have ambiguity errors or a silent change in behavior when migrating.
+* If you use the `operator==` before the compiler sees the matching `operator!=` declaration (eg, from within the
+    definition of the same `operator==`, for a non-member non-template `operator==`), you can still get rewrites.
 
 Wording
 ==================================

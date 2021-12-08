@@ -2131,18 +2131,19 @@
            <li><a href="#second-resolution"><span class="secno">1.3.2</span> <span class="content">Second resolution</span></a>
           </ol>
         </ol>
-       <li><a href="#wording"><span class="secno">2</span> <span class="content">Wording</span></a>
+       <li><a href="#programming-model"><span class="secno">2</span> <span class="content">Programming Model</span></a>
+       <li><a href="#wording"><span class="secno">3</span> <span class="content">Wording</span></a>
        <li>
-        <a href="#appendix"><span class="secno">3</span> <span class="content">Appendix</span></a>
+        <a href="#appendix"><span class="secno">4</span> <span class="content">Appendix</span></a>
         <ol class="toc">
-         <li><a href="#code-patterns-which-fail-to-compile-even-under-new-rules"><span class="secno">3.1</span> <span class="content">Code patterns which fail to compile even under new rules</span></a>
-         <li><a href="#code-patterns-which-fail-at-runtime"><span class="secno">3.2</span> <span class="content">Code patterns which fail at runtime</span></a>
-         <li><a href="#code-patterns-which-fail-due-to"><span class="secno">3.3</span> <span class="content">Code patterns which fail due to <code class="highlight"><c- o>&lt;=></c-></code></span></a>
+         <li><a href="#code-patterns-which-fail-to-compile-even-under-new-rules"><span class="secno">4.1</span> <span class="content">Code patterns which fail to compile even under new rules</span></a>
+         <li><a href="#code-patterns-which-fail-at-runtime"><span class="secno">4.2</span> <span class="content">Code patterns which fail at runtime</span></a>
+         <li><a href="#code-patterns-which-fail-due-to"><span class="secno">4.3</span> <span class="content">Code patterns which fail due to <code class="highlight"><c- o>&lt;=></c-></code></span></a>
         </ol>
        <li>
-        <a href="#revision-history"><span class="secno">4</span> <span class="content">Revision History</span></a>
+        <a href="#revision-history"><span class="secno">5</span> <span class="content">Revision History</span></a>
         <ol class="toc">
-         <li><a href="#revision-1"><span class="secno">4.1</span> <span class="content">Revision 1</span></a>
+         <li><a href="#revision-1"><span class="secno">5.1</span> <span class="content">Revision 1</span></a>
         </ol>
       </ol>
      </nav>
@@ -2318,7 +2319,35 @@
       <p>Where the type does not define a corresponding <code class="highlight"><c- k>operator</c-><c- o>!=</c-></code> to disable the rewrite behavior.</p>
       <p>Based on the results and the principled approach of the latter rule we propose this resolution for
    standardization.</p>
-      <h2 class="heading settled" data-level="2" id="wording"><span class="secno">2. </span><span class="content">Wording</span><a class="self-link" href="#wording"></a></h2>
+      <h2 class="heading settled" data-level="2" id="programming-model"><span class="secno">2. </span><span class="content">Programming Model</span><a class="self-link" href="#programming-model"></a></h2>
+      <p>With proposal suggested in "Second resolution" the programming model for C++20 becomes:</p>
+      <ul>
+       <li data-md>
+        <p>If you want an <code class="highlight"><c- k>operator</c-><c- o>==</c-></code> that is used for rewrites (automatically reversed, and <code class="highlight"><c- o>!=</c-></code> automatically
+   generated), write only an <code class="highlight"><c- k>operator</c-><c- o>==</c-></code>, and make sure its return type is <code class="highlight"><c- b>bool</c-></code>.</p>
+       <li data-md>
+        <p>If you want an <code class="highlight"><c- k>operator</c-><c- o>==</c-></code> that is not used for rewrites, write both an <code class="highlight"><c- k>operator</c-><c- o>==</c-></code> and a matching <code class="highlight"><c- k>operator</c-><c- o>!=</c-></code>.</p>
+       <li data-md>
+        <p><code class="highlight"><c- k>operator</c-><c- o>&lt;=></c-></code> is always used for rewrites (from <code class="highlight"><c- o>&lt;</c-></code>, <code class="highlight"><c- o>&lt;=</c-></code>, <code class="highlight"><c- o>></c-></code>, <code class="highlight"><c- o>>=</c-></code>); if you don’t want rewrites, don’t
+   write an <code class="highlight"><c- k>operator</c-><c- o>&lt;=></c-></code>.</p>
+      </ul>
+      <p>For migration:</p>
+      <ul>
+       <li data-md>
+        <p>To keep the behavior the same, make sure every <code class="highlight"><c- k>operator</c-><c- o>==</c-></code> has a matching <code class="highlight"><c- k>operator</c-><c- o>!=</c-></code>.</p>
+       <li data-md>
+        <p>Once you’re happy for rewrites to start being performed, remove the <code class="highlight"><c- k>operator</c-><c- o>!=</c-></code>.</p>
+      </ul>
+      <p>Surprises and caveats:</p>
+      <ul>
+       <li data-md>
+        <p>If you have an <code class="highlight"><c- k>operator</c-><c- o>==</c-></code> with no matching <code class="highlight"><c- k>operator</c-><c- o>!=</c-></code>, <em>and</em> you migrate from C++17 to C++20, <em>and</em> your <code class="highlight"><c- k>operator</c-><c- o>==</c-></code> is not symmetric (either intentionally or accidentally -- usually due to a missing <code class="highlight"><c- k>const</c-></code>), <em>and</em> you use an <code class="highlight"><c- o>==</c-></code> or <code class="highlight"><c- o>!=</c-></code> in a way where the rewritten form of that operator is a better match, then you can
+   have ambiguity errors or a silent change in behavior when migrating.</p>
+       <li data-md>
+        <p>If you use the <code class="highlight"><c- k>operator</c-><c- o>==</c-></code> before the compiler sees the matching <code class="highlight"><c- k>operator</c-><c- o>!=</c-></code> declaration (eg, from within the
+   definition of the same <code class="highlight"><c- k>operator</c-><c- o>==</c-></code>, for a non-member non-template <code class="highlight"><c- k>operator</c-><c- o>==</c-></code>), you can still get rewrites.</p>
+      </ul>
+      <h2 class="heading settled" data-level="3" id="wording"><span class="secno">3. </span><span class="content">Wording</span><a class="self-link" href="#wording"></a></h2>
       <p>Change in 12.2.2.3 [over.match.oper] paragraph 3:</p>
       <blockquote>
        <p>The rewritten candidate set is determined as follows:</p>
@@ -2340,8 +2369,8 @@
       <blockquote>
        <p>[Note 2: A candidate synthesized from a member candidate has its implicit object parameter as the second parameter, thus implicit conversions are considered for the first, but not for the second, parameter. — end note]</p>
       </blockquote>
-      <h2 class="heading settled" data-level="3" id="appendix"><span class="secno">3. </span><span class="content">Appendix</span><a class="self-link" href="#appendix"></a></h2>
-      <h3 class="heading settled" data-level="3.1" id="code-patterns-which-fail-to-compile-even-under-new-rules"><span class="secno">3.1. </span><span class="content">Code patterns which fail to compile even under new rules</span><a class="self-link" href="#code-patterns-which-fail-to-compile-even-under-new-rules"></a></h3>
+      <h2 class="heading settled" data-level="4" id="appendix"><span class="secno">4. </span><span class="content">Appendix</span><a class="self-link" href="#appendix"></a></h2>
+      <h3 class="heading settled" data-level="4.1" id="code-patterns-which-fail-to-compile-even-under-new-rules"><span class="secno">4.1. </span><span class="content">Code patterns which fail to compile even under new rules</span><a class="self-link" href="#code-patterns-which-fail-to-compile-even-under-new-rules"></a></h3>
    <pre class="language-c++ highlight"><c- n>template</c-><c- o>&lt;</c-><c- n>class</c-> <c- n>Derived</c-><c- o>></c->
    <c- k>struct</c-> <c- nc>Base</c-> <c- p>{</c->
      <c- b>int</c-> <c- n>operator</c-><c- o>==</c-><c- p>(</c-><c- k>const</c-> <c- b>double</c-><c- o>&amp;</c-><c- p>)</c-> <c- k>const</c-><c- p>;</c->
@@ -2375,7 +2404,7 @@
       <p>This would also be ambiguous even without the definition of <code class="highlight"><c- n>Derived</c-><c- o>::</c-><c- k>operator</c-><c- o>==</c-></code> and in our view is
    considered a bugfix in C++20 which forces the user to carefully consider how objects are being
    compared.</p>
-      <h3 class="heading settled" data-level="3.2" id="code-patterns-which-fail-at-runtime"><span class="secno">3.2. </span><span class="content">Code patterns which fail at runtime</span><a class="self-link" href="#code-patterns-which-fail-at-runtime"></a></h3>
+      <h3 class="heading settled" data-level="4.2" id="code-patterns-which-fail-at-runtime"><span class="secno">4.2. </span><span class="content">Code patterns which fail at runtime</span><a class="self-link" href="#code-patterns-which-fail-at-runtime"></a></h3>
       <p>In C++20, because of how candidate sets are expanded there are a few scenarios where a new candidate
    introduced is then selected as the best candidate without any code change.  In many cases this can
    be fine but there are a few cases we identified as being potentially problematic for code authors.</p>
@@ -2409,13 +2438,13 @@
    </pre>
       <p>In C++17 the user intended for comparisons to be dispatched to the templated <code class="highlight"><c- k>operator</c-><c- o>==</c-></code>.  In C++20
    the templated <code class="highlight"><c- k>operator</c-><c- o>==</c-></code> is considered to be a worse match based on <a href="http://eel.is/c%2B%2Bdraft/over.match#best.general-2.4"><code class="highlight"><c- p>[</c-><c- n>over</c-><c- p>.</c-><c- n>match</c-><c- p>.</c-><c- n>best</c-><c- p>.</c-><c- n>general</c-><c- p>]</c-><c- o>/</c-><c- mf>2.4</c-></code></a> which is a tiebreaker before rewritten candidate tiebreakers, which makes <code class="highlight"><c- k>operator</c-><c- o>==</c-><c- p>(</c-><c- k>const</c-> <c- n>U</c-><c- o>&amp;</c-> <c- n>u</c-><c- p>,</c-> <c- k>const</c-> <c- n>S</c-><c- o>&amp;</c-> <c- n>s</c-><c- p>)</c-></code> the best match for the comparison <code class="highlight"><c- n>s</c-> <c- o>==</c-> <c- n>u</c-></code>.</p>
-      <h3 class="heading settled" data-level="3.3" id="code-patterns-which-fail-due-to"><span class="secno">3.3. </span><span class="content">Code patterns which fail due to <code class="highlight"><c- o>&lt;=></c-></code></span><a class="self-link" href="#code-patterns-which-fail-due-to"></a></h3>
+      <h3 class="heading settled" data-level="4.3" id="code-patterns-which-fail-due-to"><span class="secno">4.3. </span><span class="content">Code patterns which fail due to <code class="highlight"><c- o>&lt;=></c-></code></span><a class="self-link" href="#code-patterns-which-fail-due-to"></a></h3>
       <p>The paper also acknowledges other types of breakages involving the spaceship operator such as the reported
    issue in <a href="https://www.reddit.com/r/cpp/comments/ra5cpy/the_spacesship_operator_silently_broke_my_code/">reddit</a>.  While
    this paper makes no attempt to address the concerns in the thread there is the potential for fixing such
    issues through diagnostics provided by the compiler or tooling.</p>
-      <h2 class="heading settled" data-level="4" id="revision-history"><span class="secno">4. </span><span class="content">Revision History</span><a class="self-link" href="#revision-history"></a></h2>
-      <h3 class="heading settled" data-level="4.1" id="revision-1"><span class="secno">4.1. </span><span class="content">Revision 1</span><a class="self-link" href="#revision-1"></a></h3>
+      <h2 class="heading settled" data-level="5" id="revision-history"><span class="secno">5. </span><span class="content">Revision History</span><a class="self-link" href="#revision-history"></a></h2>
+      <h3 class="heading settled" data-level="5.1" id="revision-1"><span class="secno">5.1. </span><span class="content">Revision 1</span><a class="self-link" href="#revision-1"></a></h3>
       <p>Refine "second resolution" / updated wording to reflect the new rule.</p>
      </main>
    <script>
