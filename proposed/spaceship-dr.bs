@@ -1,7 +1,7 @@
 <pre class='metadata'>
 Title: The Equality Operator You Are Looking For
 Shortname: P2468R0
-Revision: 0
+Revision: 1
 Date: 2020-06-18
 Editor: Barry Revzin, barry.revzin@gmail.com
 Editor: Bjarne Stroustrup, bjarne@stroustrup.com
@@ -243,6 +243,44 @@ freedom for the implementation to blindly rewrite `!=` using `operator==`.  This
 checks all the boxes above of code patterns we want to enable while also maintaining strong rules
 around comparing viable candidates for rewriting.
 
+### Third resolution
+
+Upon more reflection over the second resolution we further refined that rule into something more targeted
+at operator rewrites for `==` as opposed to the more general rule as implemented by MSVC for the second
+resolution.
+
+First, the rule, as suggested by Richard Smith:
+
+> When considering adding a rewritten operator to the candidate set, if the rewrite target is `operator==`, and
+> a matching `operator!=` is declared (that is: if you take the declaration of the `operator==` and replace the
+> name with `operator!=`, would that declaration redeclare anything?), do not add the rewritten candidate to
+> the candidate set. (With no other changes to the C++20 rules.)
+
+After implementing the above suggestion in MSVC we have gathered the following data after running the compiler
+through a number of open source projects (this number is different from the tables above due to more projects
+added since the original run):
+
+<table>
+  <tr>
+    <th>Total Projects
+    <th>Failed Projects
+  </tr>
+  <tr>
+    <td>110
+    <td>8</em>
+  </tr>
+</table>
+
+Most of the breakage due to the rule above were around the following pattern:
+
+```c++
+struct S {
+  bool operator==(const S&);
+};
+```
+
+Where the type does not define a corresponding `operator!=` to disable the rewrite behavior.
+
 Based on the results and the principled approach of the latter rule we propose this resolution for
 standardization.
 
@@ -258,7 +296,7 @@ Change in 12.2.2.3 [over.match.oper] paragraph 3:
 > * For the != operator ([expr.eq]), the rewritten candidates include all non-rewritten candidates for the expression x == y.
 > * For the equality operators, the rewritten candidates also include a synthesized candidate, with the order of the two parameters reversed, for each non-rewritten candidate for the expression y == x.
 >
-> * <ins>For any rewritten operator candidate, if there exists another candidate with the same signature declared in the same scope and that candidate is a non-rewritten candidate then the rewritten candiate is removed from the candidate set.</ins>
+> * <ins>For any rewritten candidate with the name '==', if there exists another function with the name '!=' declared in the same scope with the same signature, the rewritten candidate is removed from the candidate set.</ins>
 >
 > * For all other operators, the rewritten candidate set is empty.
 
@@ -359,3 +397,19 @@ the templated `operator==` is considered to be a worse match based on
 <a href="http://eel.is/c%2B%2Bdraft/over.match#best.general-2.4">`[over.match.best.general]/2.4`</a>
 which is a tiebreaker before rewritten candidate tiebreakers, which makes `operator==(const U& u, const S& s)`
 the best match for the comparison `s == u`.
+
+Code patterns which fail due to `<=>`
+--------------
+
+The paper also acknowledges other types of breakages involving the spaceship operator such as the reported
+issue in [reddit](https://www.reddit.com/r/cpp/comments/ra5cpy/the_spacesship_operator_silently_broke_my_code/).  While
+this paper makes no attempt to address the concerns in the thread there is the potential for fixing such
+issues through diagnostics provided by the compiler or tooling.
+
+Revision History
+==================================
+
+Revision 1
+--------------
+
+Added refinement rule "Third resolution" / updated wording to reflect the new rule.
