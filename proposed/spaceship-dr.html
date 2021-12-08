@@ -2129,7 +2129,6 @@
           <ol class="toc">
            <li><a href="#first-resolution"><span class="secno">1.3.1</span> <span class="content">First resolution</span></a>
            <li><a href="#second-resolution"><span class="secno">1.3.2</span> <span class="content">Second resolution</span></a>
-           <li><a href="#third-resolution"><span class="secno">1.3.3</span> <span class="content">Third resolution</span></a>
           </ol>
         </ol>
        <li><a href="#wording"><span class="secno">2</span> <span class="content">Wording</span></a>
@@ -2196,6 +2195,7 @@
    <pre class="language-c++ highlight"><c- n>template</c-> <c- o>&lt;</c-><c- n>typename</c-> <c- n>T</c-><c- o>></c->
    <c- k>struct</c-> <c- nc>Base</c-> <c- p>{</c->
      <c- b>bool</c-> <c- n>operator</c-><c- o>==</c-><c- p>(</c-><c- k>const</c-> <c- n>T</c-><c- o>&amp;</c-><c- p>)</c-> <c- k>const</c-><c- p>;</c->
+     <c- b>bool</c-> <c- n>operator</c-><c- o>!=</c-><c- p>(</c-><c- k>const</c-> <c- n>T</c-><c- o>&amp;</c-><c- p>)</c-> <c- k>const</c-><c- p>;</c->
    <c- p>};</c->
    
    <c- k>struct</c-> <c- nc>Derived</c-> <c- o>:</c-> <c- n>Base</c-><c- o>&lt;</c-><c- n>Derived</c-><c- o>></c-> <c- p>{</c-> <c- p>};</c->
@@ -2216,6 +2216,7 @@
      <c- n>GenericIterator</c-><c- p>(</c-><c- k>const</c-> <c- n>NonConstIterator</c-><c- o>&amp;</c-><c- p>);</c->
    
      <c- b>bool</c-> <c- n>operator</c-><c- o>==</c-><c- p>(</c-><c- n>ConstIterator</c-><c- p>)</c-> <c- k>const</c-><c- p>;</c->
+     <c- b>bool</c-> <c- n>operator</c-><c- o>!=</c-><c- p>(</c-><c- n>ConstIterator</c-><c- p>)</c-> <c- k>const</c-><c- p>;</c->
    <c- p>};</c->
    <c- n>using</c-> <c- n>Iterator</c-> <c- o>=</c-> <c- n>GenericIterator</c-><c- o>&lt;</c->false<c- o>></c-><c- p>;</c->
    
@@ -2287,33 +2288,7 @@
    GCC approach ticked all the boxes for code we wanted to compile (mentioned above) while maintaining
    the spirit of the original operator rewriting proposal <a href="https://wg21.link/p0515r3">P0515R3</a> by allowing heterogenous comparisons.</p>
       <h4 class="heading settled" data-level="1.3.2" id="second-resolution"><span class="secno">1.3.2. </span><span class="content">Second resolution</span><a class="self-link" href="#second-resolution"></a></h4>
-      <p>After discussing the GCC rule Richard Smith proposed a new one:</p>
-      <blockquote>
-       <p>what if we do not consider rewriting to an <code class="highlight"><c- k>operator</c-><c- o>==</c-></code> if there is an <code class="highlight"><c- k>operator</c-><c- o>!=</c-></code> with the same
-   signature declared in the same scope? One could argue that all reasonable C++&lt;=17 overload sets
-   will declare <code class="highlight"><c- k>operator</c-><c- o>==</c-></code> and <code class="highlight"><c- k>operator</c-><c- o>!=</c-></code> together, with the same signatures, and all code
-   intending to use the C++20 rules will declare only <code class="highlight"><c- k>operator</c-><c- o>==</c-></code>. Then the way you turn off
-   rewriting is by doing exactly what you did before C++20: you write an <code class="highlight"><c- k>operator</c-><c- o>!=</c-></code> with your <code class="highlight"><c- k>operator</c-><c- o>==</c-></code>.</p>
-      </blockquote>
-      <p>Note that the above proposal is nearly identical to the GCC approach with the exception of the
-   'declared in the same scope' rule.  After implementing the above rule in MSVC (but applying to any
-   rewritten operator not just <code class="highlight"><c- o>==</c-></code>) we obtained the following results:</p>
-      <table>
-       <tbody>
-        <tr>
-         <th>Total Projects 
-         <th>Failed Projects 
-        <tr>
-         <td>59 
-         <td>10 
-      </table>
-      <p>The results are identical to that of the GCC rule which implies that we neither regressed behavior
-   nor improved it.  The good thing about the rule as proposed by Richard is that it offers more
-   freedom for the implementation to blindly rewrite <code class="highlight"><c- o>!=</c-></code> using <code class="highlight"><c- k>operator</c-><c- o>==</c-></code>.  This proposal still
-   checks all the boxes above of code patterns we want to enable while also maintaining strong rules
-   around comparing viable candidates for rewriting.</p>
-      <h4 class="heading settled" data-level="1.3.3" id="third-resolution"><span class="secno">1.3.3. </span><span class="content">Third resolution</span><a class="self-link" href="#third-resolution"></a></h4>
-      <p>Upon more reflection over the second resolution we further refined that rule into something more targeted
+      <p>Upon more reflection over the first resolution we further refined that rule into something more targeted
    at operator rewrites for <code class="highlight"><c- o>==</c-></code> as opposed to the more general rule as implemented by MSVC for the second
    resolution.</p>
       <p>First, the rule, as suggested by Richard Smith:</p>
@@ -2357,7 +2332,7 @@
         <li data-md>
          <p>For the equality operators, the rewritten candidates also include a synthesized candidate, with the order of the two parameters reversed, for each non-rewritten candidate for the expression y == x.</p>
         <li data-md>
-         <ins>For any rewritten candidate with the name '==', if there exists another function with the name '!=' declared in the same scope with the same signature, the rewritten candidate is removed from the candidate set.</ins>
+         <ins>For any rewritten candidate that is, or synthesized from, a function with the name 'operator==', if there exists another function with the name 'operator!=' declared in the same scope with the same signature, the rewritten candidate is removed from the candidate set.</ins>
         <li data-md>
          <p>For all other operators, the rewritten candidate set is empty.</p>
        </ul>
@@ -2371,15 +2346,15 @@
    <c- k>struct</c-> <c- nc>Base</c-> <c- p>{</c->
      <c- b>int</c-> <c- n>operator</c-><c- o>==</c-><c- p>(</c-><c- k>const</c-> <c- b>double</c-><c- o>&amp;</c-><c- p>)</c-> <c- k>const</c-><c- p>;</c->
      <c- n>friend</c-> <c- kr>inline</c-> <c- b>int</c-> <c- n>operator</c-><c- o>==</c-><c- p>(</c-><c- k>const</c-> <c- b>double</c-><c- o>&amp;</c-><c- p>,</c-> <c- k>const</c-> <c- n>Derived</c-><c- o>&amp;</c-><c- p>);</c->
-     <c- b>int</c-> <c- n>operator</c-><c- o>!=</c-><c- p>(</c-><c- k>const</c-> <c- b>double</c-><c- o>&amp;</c-><c- p>)</c-> <c- k>const</c-><c- p>;</c->
-     <c- n>friend</c-> <c- kr>inline</c-> <c- b>int</c-> <c- n>operator</c-><c- o>!=</c-><c- p>(</c-><c- k>const</c-> <c- b>double</c-><c- o>&amp;</c-><c- p>,</c-> <c- k>const</c-> <c- n>Derived</c-><c- o>&amp;</c-><c- p>);</c->
    <c- p>};</c->
    
    <c- k>struct</c-> <c- nc>X</c-> <c- o>:</c-> <c- n>Base</c-><c- o>&lt;</c-><c- n>X</c-><c- o>></c-> <c- p>{</c-> <c- p>};</c->
    
    <c- b>bool</c-> <c- n>b</c-> <c- o>=</c-> <c- n>X</c-><c- p>{}</c-> <c- o>==</c-> <c- mf>0.</c-><c- p>;</c->
    </pre>
-      <p>Fails due to requirements of rewritten operator returning <em>cv</em>-<code class="highlight"><c- b>bool</c-></code>.</p>
+      <p>In C++17 and before, the member <code class="highlight"><c- k>operator</c-><c- o>==</c-></code> was selected. In C++20, the friend <code class="highlight"><c- k>operator</c-><c- o>==</c-></code>, with reversed
+   parameter order, is selected because it does not require a derived-to-base conversion. Rewriting to this <code class="highlight"><c- k>operator</c-><c- o>==</c-></code> is not disabled because no corresponding <code class="highlight"><c- k>operator</c-><c- o>!=</c-></code> is declared. This rewrite fails due to
+   requirements of rewritten operator returning <em>cv</em>-<code class="highlight"><c- b>bool</c-></code>.</p>
    <pre class="language-c++ highlight"><c- k>struct</c-> <c- nc>Base</c-> <c- p>{</c->
        <c- b>bool</c-> <c- n>operator</c-><c- o>==</c-><c- p>(</c-><c- k>const</c-> <c- n>Base</c-><c- o>&amp;</c-><c- p>)</c-> <c- k>const</c-><c- p>;</c->
        <c- b>bool</c-> <c- n>operator</c-><c- o>!=</c-><c- p>(</c-><c- k>const</c-> <c- n>Base</c-><c- o>&amp;</c-><c- p>)</c-> <c- k>const</c-><c- p>;</c->
@@ -2441,7 +2416,7 @@
    issues through diagnostics provided by the compiler or tooling.</p>
       <h2 class="heading settled" data-level="4" id="revision-history"><span class="secno">4. </span><span class="content">Revision History</span><a class="self-link" href="#revision-history"></a></h2>
       <h3 class="heading settled" data-level="4.1" id="revision-1"><span class="secno">4.1. </span><span class="content">Revision 1</span><a class="self-link" href="#revision-1"></a></h3>
-      <p>Added refinement rule "Third resolution" / updated wording to reflect the new rule.</p>
+      <p>Refine "second resolution" / updated wording to reflect the new rule.</p>
      </main>
    <script>
    (function() {

@@ -96,6 +96,7 @@ Many of the failures are caused by the first code sample mentioned.  Other failu
 template <typename T>
 struct Base {
   bool operator==(const T&) const;
+  bool operator!=(const T&) const;
 };
 
 struct Derived : Base<Derived> { };
@@ -120,6 +121,7 @@ struct GenericIterator {
   GenericIterator(const NonConstIterator&);
 
   bool operator==(ConstIterator) const;
+  bool operator!=(ConstIterator) const;
 };
 using Iterator = GenericIterator<false>;
 
@@ -213,39 +215,7 @@ by allowing heterogenous comparisons.
 
 ### Second resolution
 
-After discussing the GCC rule Richard Smith proposed a new one:
-
-> what if we do not consider rewriting to an `operator==` if there is an `operator!=` with the same
-> signature declared in the same scope? One could argue that all reasonable C++<=17 overload sets
-> will declare `operator==` and `operator!=` together, with the same signatures, and all code
-> intending to use the C++20 rules will declare only `operator==`. Then the way you turn off
-> rewriting is by doing exactly what you did before C++20: you write an `operator!=` with your
-> `operator==`.
-
-Note that the above proposal is nearly identical to the GCC approach with the exception of the
-'declared in the same scope' rule.  After implementing the above rule in MSVC (but applying to any
-rewritten operator not just `==`) we obtained the following results:
-
-<table>
-  <tr>
-    <th>Total Projects
-    <th>Failed Projects
-  </tr>
-  <tr>
-    <td>59
-    <td>10
-  </tr>
-</table>
-
-The results are identical to that of the GCC rule which implies that we neither regressed behavior
-nor improved it.  The good thing about the rule as proposed by Richard is that it offers more
-freedom for the implementation to blindly rewrite `!=` using `operator==`.  This proposal still
-checks all the boxes above of code patterns we want to enable while also maintaining strong rules
-around comparing viable candidates for rewriting.
-
-### Third resolution
-
-Upon more reflection over the second resolution we further refined that rule into something more targeted
+Upon more reflection over the first resolution we further refined that rule into something more targeted
 at operator rewrites for `==` as opposed to the more general rule as implemented by MSVC for the second
 resolution.
 
@@ -296,7 +266,7 @@ Change in 12.2.2.3 [over.match.oper] paragraph 3:
 > * For the != operator ([expr.eq]), the rewritten candidates include all non-rewritten candidates for the expression x == y.
 > * For the equality operators, the rewritten candidates also include a synthesized candidate, with the order of the two parameters reversed, for each non-rewritten candidate for the expression y == x.
 >
-> * <ins>For any rewritten candidate with the name '==', if there exists another function with the name '!=' declared in the same scope with the same signature, the rewritten candidate is removed from the candidate set.</ins>
+> * <ins>For any rewritten candidate that is, or synthesized from, a function with the name 'operator==', if there exists another function with the name 'operator!=' declared in the same scope with the same signature, the rewritten candidate is removed from the candidate set.</ins>
 >
 > * For all other operators, the rewritten candidate set is empty.
 
@@ -313,8 +283,6 @@ template<class Derived>
 struct Base {
   int operator==(const double&) const;
   friend inline int operator==(const double&, const Derived&);
-  int operator!=(const double&) const;
-  friend inline int operator!=(const double&, const Derived&);
 };
 
 struct X : Base<X> { };
@@ -322,7 +290,10 @@ struct X : Base<X> { };
 bool b = X{} == 0.;
 ```
 
-Fails due to requirements of rewritten operator returning <em>cv</em>-`bool`.
+In C++17 and before, the member `operator==` was selected. In C++20, the friend `operator==`, with reversed
+parameter order, is selected because it does not require a derived-to-base conversion. Rewriting to this
+`operator==` is not disabled because no corresponding `operator!=` is declared. This rewrite fails due to
+requirements of rewritten operator returning <em>cv</em>-`bool`.
 
 ```c++
 struct Base {
@@ -412,4 +383,4 @@ Revision History
 Revision 1
 --------------
 
-Added refinement rule "Third resolution" / updated wording to reflect the new rule.
+Refine "second resolution" / updated wording to reflect the new rule.
