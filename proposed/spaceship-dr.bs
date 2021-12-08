@@ -266,7 +266,7 @@ Change in 12.2.2.3 [over.match.oper] paragraph 3:
 > * For the != operator ([expr.eq]), the rewritten candidates include all non-rewritten candidates for the expression x == y.
 > * For the equality operators, the rewritten candidates also include a synthesized candidate, with the order of the two parameters reversed, for each non-rewritten candidate for the expression y == x.
 >
-> * <ins>For any rewritten candidate that is, or synthesized from, a function with the name 'operator==', if there exists another function with the name 'operator!=' declared in the same scope with the same signature, the rewritten candidate is removed from the candidate set.</ins>
+> * <ins>For any rewritten candidate that is, or is synthesized from, a function with the name 'operator==', if there exists another function with the name 'operator!=' declared in the same scope with the same signature, the rewritten candidate is removed from the candidate set.</ins>
 >
 > * For all other operators, the rewritten candidate set is empty.
 
