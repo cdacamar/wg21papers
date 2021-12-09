@@ -1,6 +1,6 @@
 <pre class='metadata'>
 Title: The Equality Operator You Are Looking For
-Shortname: P2468R0
+Shortname: P2468R1
 Revision: 1
 Date: 2020-06-18
 Editor: Barry Revzin, barry.revzin@gmail.com
@@ -18,7 +18,7 @@ Abstract: This paper details some changes to make rewriting equality in expressi
 Status: P
 Group: wg21
 Audience: EWG
-URL: http://wg21.link/p2468r0
+URL: http://wg21.link/p2468r1
 Markup Shorthands: markdown yes
 </pre>
 
