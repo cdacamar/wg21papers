@@ -290,9 +290,6 @@ Change in 12.2.2.3 [over.match.oper] paragraph 3:
 > * For the relational ([expr.rel]) and three-way comparison ([expr.spaceship]) operators, the rewritten candidates also include a synthesized candidate, with the order of the two parameters reversed, for each non-rewritten candidate for the expression y <=> x.
 > * For the != operator ([expr.eq]), the rewritten candidates include all non-rewritten candidates for the expression x == y <ins>that are rewrite targets with first operand x (see below)</ins>.
 > * For the equality operators, the rewritten candidates also include a synthesized candidate, with the order of the two parameters reversed, for each non-rewritten candidate for the expression y == x <ins>that is a rewrite target with first operand y</ins>.
->
-> * <ins>For any rewritten candidate that is, or is synthesized from, a function with the name 'operator==', if there exists another function with the name 'operator!=' declared in the same scope with the same signature, the rewritten candidate is removed from the candidate set.</ins>
->
 > * For all other operators, the rewritten candidate set is empty.
 >
 > <ins>An operator== non-template function or function template F is a rewrite target with first operand o unless a search for the name operator!= in the scope S from the instantiation context of the operator expression finds a function or function template that would correspond ([basic.scope.scope]) to F if its name were operator==, where S is the scope of the class type of o if F is a class member, and the namespace scope of which F is a member otherwise. An operator== that is a function template specialization is a rewrite target if its function template is a rewrite target.</ins>
