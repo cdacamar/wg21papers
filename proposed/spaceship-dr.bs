@@ -288,14 +288,35 @@ Change in 12.2.2.3 [over.match.oper] paragraph 3:
 > The rewritten candidate set is determined as follows:
 > * For the relational ([expr.rel]) operators, the rewritten candidates include all non-rewritten candidates for the expression x <=> y.
 > * For the relational ([expr.rel]) and three-way comparison ([expr.spaceship]) operators, the rewritten candidates also include a synthesized candidate, with the order of the two parameters reversed, for each non-rewritten candidate for the expression y <=> x.
-> * For the != operator ([expr.eq]), the rewritten candidates include all non-rewritten candidates for the expression x == y.
-> * For the equality operators, the rewritten candidates also include a synthesized candidate, with the order of the two parameters reversed, for each non-rewritten candidate for the expression y == x.
+> * For the != operator ([expr.eq]), the rewritten candidates include all non-rewritten candidates for the expression x == y <ins>that are rewrite targets with first operand x (see below)</ins>.
+> * For the equality operators, the rewritten candidates also include a synthesized candidate, with the order of the two parameters reversed, for each non-rewritten candidate for the expression y == x <ins>that is a rewrite target with first operand y</ins>.
 >
 > * <ins>For any rewritten candidate that is, or is synthesized from, a function with the name 'operator==', if there exists another function with the name 'operator!=' declared in the same scope with the same signature, the rewritten candidate is removed from the candidate set.</ins>
 >
 > * For all other operators, the rewritten candidate set is empty.
+>
+> <ins>An operator== non-template function or function template F is a rewrite target with first operand o unless a search for the name operator!= in the scope S from the instantiation context of the operator expression finds a function or function template that would correspond ([basic.scope.scope]) to F if its name were operator==, where S is the scope of the class type of o if F is a class member, and the namespace scope of which F is a member otherwise. An operator== that is a function template specialization is a rewrite target if its function template is a rewrite target.</ins>
+> <ins>[Example:</ins>
+```c++
+struct A {};
+template<typename T> bool operator==(A, T);  // #1 bool a1 = 0 == A();  // OK, calls reversed #1 template<typename T> bool operator!=(A, T); bool a2 = 0 == A();  // error, #1 is not a rewrite target
+
+struct B {
+  bool operator==(const B&);  // #2
+};
+struct C : B {
+  bool operator!=(const B&);  // #3
+};
+bool c1 = B() == C();  // OK, calls #2; reversed #2 is not a candidate because search for operator!= in C finds #3 bool c2 = C() == B();  // error, ambiguous between #2 found when searching C and reversed #2 found when searching B
+```
+> <ins>-- end example]</ins>
 
 > [Note 2: A candidate synthesized from a member candidate has its implicit object parameter as the second parameter, thus implicit conversions are considered for the first, but not for the second, parameter. — end note]
+
+Change in 10.4.3.3 [glob.module.frag] paragraph 3:
+
+> * S contains an expression E of the form postfix-expression ( expression-listopt ) whose postfix-expression denotes a dependent name, or for an operator expression whose operator denotes a dependent name, and D is found by <ins>any</ins> name lookup <ins>performed</ins> for <del>the corresponding name in</del> an expression synthesized from E by replacing each type-dependent argument or operand with a value of a placeholder type with no associated namespaces or entities, or <ins>[Note: This includes the lookup for operator== performed when considering rewriting an != expression, the lookup for operator<=> performed when considering rewriting a relational comparison, and the lookup for operator!= when considering whether an operator== is a rewrite target.]</ins>
+
 
 Appendix
 ==================================
