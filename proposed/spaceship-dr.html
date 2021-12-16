@@ -2375,15 +2375,21 @@
        <ins>[Example:</ins>
       </blockquote>
    <pre class="language-c++ highlight"><c- k>struct</c-> <c- nc>A</c-> <c- p>{};</c->
-   <c- n>template</c-><c- o>&lt;</c-><c- n>typename</c-> <c- n>T</c-><c- o>></c-> <c- b>bool</c-> <c- n>operator</c-><c- o>==</c-><c- p>(</c-><c- n>A</c-><c- p>,</c-> <c- n>T</c-><c- p>);</c->  <c- c1>// #1 bool a1 = 0 == A();  // OK, calls reversed #1 template&lt;typename T> bool operator!=(A, T); bool a2 = 0 == A();  // error, #1 is not a rewrite target</c->
+   <c- n>template</c-><c- o>&lt;</c-><c- n>typename</c-> <c- n>T</c-><c- o>></c-> <c- b>bool</c-> <c- n>operator</c-><c- o>==</c-><c- p>(</c-><c- n>A</c-><c- p>,</c-> <c- n>T</c-><c- p>);</c->  <c- c1>// #1</c->
+   <c- b>bool</c-> <c- n>a1</c-> <c- o>=</c-> <c- mi>0</c-> <c- o>==</c-> <c- n>A</c-><c- p>();</c->  <c- c1>// OK, calls reversed #1</c->
+   <c- n>template</c-><c- o>&lt;</c-><c- n>typename</c-> <c- n>T</c-><c- o>></c-> <c- b>bool</c-> <c- n>operator</c-><c- o>!=</c-><c- p>(</c-><c- n>A</c-><c- p>,</c-> <c- n>T</c-><c- p>);</c->
+   <c- b>bool</c-> <c- n>a2</c-> <c- o>=</c-> <c- mi>0</c-> <c- o>==</c-> <c- n>A</c-><c- p>();</c->  <c- c1>// error, #1 is not a rewrite target</c->
    
    <c- k>struct</c-> <c- nc>B</c-> <c- p>{</c->
      <c- b>bool</c-> <c- n>operator</c-><c- o>==</c-><c- p>(</c-><c- k>const</c-> <c- n>B</c-><c- o>&amp;</c-><c- p>);</c->  <c- c1>// #2</c->
    <c- p>};</c->
    <c- k>struct</c-> <c- nc>C</c-> <c- o>:</c-> <c- n>B</c-> <c- p>{</c->
+     <c- n>C</c-><c- p>();</c->
+     <c- n>C</c-><c- p>(</c-><c- n>B</c-><c- p>);</c->
      <c- b>bool</c-> <c- n>operator</c-><c- o>!=</c-><c- p>(</c-><c- k>const</c-> <c- n>B</c-><c- o>&amp;</c-><c- p>);</c->  <c- c1>// #3</c->
    <c- p>};</c->
-   <c- b>bool</c-> <c- n>c1</c-> <c- o>=</c-> <c- n>B</c-><c- p>()</c-> <c- o>==</c-> <c- n>C</c-><c- p>();</c->  <c- c1>// OK, calls #2; reversed #2 is not a candidate because search for operator!= in C finds #3 bool c2 = C() == B();  // error, ambiguous between #2 found when searching C and reversed #2 found when searching B</c->
+   <c- b>bool</c-> <c- n>c1</c-> <c- o>=</c-> <c- n>B</c-><c- p>()</c-> <c- o>==</c-> <c- n>C</c-><c- p>();</c->  <c- c1>// OK, calls #2; reversed #2 is not a candidate because search for operator!= in C finds #3</c->
+   <c- b>bool</c-> <c- n>c2</c-> <c- o>=</c-> <c- n>C</c-><c- p>()</c-> <c- o>==</c-> <c- n>B</c-><c- p>();</c->  <c- c1>// error, ambiguous between #2 found when searching C and reversed #2 found when searching B</c->
    </pre>
       <blockquote>
        <ins>-- end example]</ins>

@@ -296,15 +296,21 @@ Change in 12.2.2.3 [over.match.oper] paragraph 3:
 > <ins>[Example:</ins>
 ```c++
 struct A {};
-template<typename T> bool operator==(A, T);  // #1 bool a1 = 0 == A();  // OK, calls reversed #1 template<typename T> bool operator!=(A, T); bool a2 = 0 == A();  // error, #1 is not a rewrite target
+template<typename T> bool operator==(A, T);  // #1
+bool a1 = 0 == A();  // OK, calls reversed #1
+template<typename T> bool operator!=(A, T);
+bool a2 = 0 == A();  // error, #1 is not a rewrite target
 
 struct B {
   bool operator==(const B&);  // #2
 };
 struct C : B {
+  C();
+  C(B);
   bool operator!=(const B&);  // #3
 };
-bool c1 = B() == C();  // OK, calls #2; reversed #2 is not a candidate because search for operator!= in C finds #3 bool c2 = C() == B();  // error, ambiguous between #2 found when searching C and reversed #2 found when searching B
+bool c1 = B() == C();  // OK, calls #2; reversed #2 is not a candidate because search for operator!= in C finds #3
+bool c2 = C() == B();  // error, ambiguous between #2 found when searching C and reversed #2 found when searching B
 ```
 > <ins>-- end example]</ins>
 
