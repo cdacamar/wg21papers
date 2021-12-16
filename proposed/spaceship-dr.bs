@@ -2,7 +2,7 @@
 Title: The Equality Operator You Are Looking For
 Shortname: P2468R1
 Revision: 1
-Date: 2020-06-18
+Date: 2021-12-15
 Editor: Barry Revzin, barry.revzin@gmail.com
 Editor: Bjarne Stroustrup, bjarne@stroustrup.com
 Editor: Cameron DaCamara, cadacama@microsoft.com
@@ -17,7 +17,7 @@ Abstract: This paper details some changes to make rewriting equality in expressi
 
 Status: P
 Group: wg21
-Audience: EWG
+Audience: CWG
 URL: http://wg21.link/p2468r1
 Markup Shorthands: markdown yes
 </pre>
@@ -292,7 +292,7 @@ Change in 12.2.2.3 [over.match.oper] paragraph 3:
 > * For the equality operators, the rewritten candidates also include a synthesized candidate, with the order of the two parameters reversed, for each non-rewritten candidate for the expression y == x <ins>that is a rewrite target with first operand y</ins>.
 > * For all other operators, the rewritten candidate set is empty.
 >
-> <ins>An operator== non-template function or function template F is a rewrite target with first operand o unless a search for the name operator!= in the scope S from the instantiation context of the operator expression finds a function or function template that would correspond ([basic.scope.scope]) to F if its name were operator==, where S is the scope of the class type of o if F is a class member, and the namespace scope of which F is a member otherwise. An operator== that is a function template specialization is a rewrite target if its function template is a rewrite target.</ins>
+> <ins>An operator== non-template function or function template F is a rewrite target with first operand o unless a search for the name operator!= in the scope S from the instantiation context of the operator expression finds a function or function template that would correspond ([basic.scope.scope]) to F if its name were operator==, where S is the scope of the class type of o if F is a class member, and the namespace scope of which F is a member otherwise. An operator== that is a function template specialization is a rewrite target if its function template is a rewrite target.<br></ins>
 > <ins>[Example:</ins>
 ```c++
 struct A {};
