@@ -3,7 +3,7 @@
     <head>
      <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
      <meta content="width=device-width, initial-scale=1, shrink-to-fit=no" name="viewport">
-     <title>P2468R1R1: The Equality Operator You Are Looking For</title>
+     <title>P2468R2: The Equality Operator You Are Looking For</title>
    <style data-fill-with="stylesheet">/******************************************************************************
     *                   Style sheet for the W3C specifications                   *
     *
@@ -1561,8 +1561,8 @@
        blockquote c-[vi] { color: inherit; } /* Name.Variable.Instance */
        blockquote c-[il] { color: inherit; } /* Literal.Number.Integer.Long */
      </style>
-     <meta content="Bikeshed version cace53f8c, updated Tue Dec 7 12:12:54 2021 -0800" name="generator">
-     <link href="http://wg21.link/p2468r1" rel="canonical">
+     <meta content="Bikeshed version 2e3c4c68b, updated Fri Jan 14 14:49:00 2022 -0800" name="generator">
+     <link href="http://wg21.link/p2468r2" rel="canonical">
      <link href="https://isocpp.org/favicon.ico" rel="icon">
    <style>/* style-autolinks */
    
@@ -2082,12 +2082,12 @@
     <body class="h-entry">
      <div class="head">
       <p data-fill-with="logo"></p>
-      <h1 class="p-name no-ref" id="title">P2468R1R1<br>The Equality Operator You Are Looking For</h1>
-      <h2 class="no-num no-toc no-ref heading settled" id="profile-and-date"><span class="content">Published Proposal, <time class="dt-updated" datetime="2021-12-15">2021-12-15</time></span></h2>
+      <h1 class="p-name no-ref" id="title">P2468R2<br>The Equality Operator You Are Looking For</h1>
+      <h2 class="no-num no-toc no-ref heading settled" id="profile-and-date"><span class="content">Published Proposal, <time class="dt-updated" datetime="2022-01-13">2022-01-13</time></span></h2>
       <div data-fill-with="spec-metadata">
        <dl>
         <dt>This version:
-        <dd><a class="u-url" href="http://wg21.link/p2468r1">http://wg21.link/p2468r1</a>
+        <dd><a class="u-url" href="http://wg21.link/p2468r2">http://wg21.link/p2468r2</a>
         <dt class="editor">Authors:
         <dd class="editor p-author h-card vcard"><a class="p-name fn u-email email" href="mailto:barry.revzin@gmail.com">Barry Revzin</a>
         <dd class="editor p-author h-card vcard"><a class="p-name fn u-email email" href="mailto:bjarne@stroustrup.com">Bjarne Stroustrup</a>
@@ -2100,7 +2100,7 @@
         <dd class="editor p-author h-card vcard"><a class="p-name fn u-email email" href="mailto:richardsmith@google.com">Richard Smith</a>
         <dd class="editor p-author h-card vcard"><a class="p-name fn u-email email" href="mailto:ville.voutilainen@gmail.com">Ville Voutilainen</a>
         <dt>Audience:
-        <dd>CWG
+        <dd>EWG
         <dt>Project:
         <dd>ISO/IEC JTC1/SC22/WG21 14882: Programming Language — C++
        </dl>
@@ -2144,12 +2144,14 @@
         <a href="#revision-history"><span class="secno">5</span> <span class="content">Revision History</span></a>
         <ol class="toc">
          <li><a href="#revision-1"><span class="secno">5.1</span> <span class="content">Revision 1</span></a>
+         <li><a href="#revision-2"><span class="secno">5.2</span> <span class="content">Revision 2</span></a>
         </ol>
       </ol>
      </nav>
      <main>
       <h2 class="heading settled" data-level="1" id="rewritten-equality-inequality-in-expressions"><span class="secno">1. </span><span class="content">Rewritten equality/inequality in expressions</span><a class="self-link" href="#rewritten-equality-inequality-in-expressions"></a></h2>
       <h3 class="heading settled" data-level="1.1" id="compiler-disagreements"><span class="secno">1.1. </span><span class="content">Compiler disagreements</span><a class="self-link" href="#compiler-disagreements"></a></h3>
+      <p>After the merge of P1185R2, C++20 changed the meaning of == and != expressions and how overload resolution applies to them.  The following was valid C++17 code:</p>
    <pre class="language-c++ highlight"><c- k>struct</c-> <c- nc>S</c-> <c- p>{</c->
      <c- b>bool</c-> <c- n>operator</c-><c- o>==</c-><c- p>(</c-><c- k>const</c-> <c- n>S</c-><c- o>&amp;</c-><c- p>)</c-> <c- p>{</c-> <c- k>return</c-> true<c- p>;</c-> <c- p>}</c-> <c- c1>// The non-const member is important here.</c->
      <c- b>bool</c-> <c- n>operator</c-><c- o>!=</c-><c- p>(</c-><c- k>const</c-> <c- n>S</c-><c- o>&amp;</c-><c- p>)</c-> <c- p>{</c-> <c- k>return</c-> false<c- p>;</c-> <c- p>}</c-> <c- c1>// The non-const member is important here.</c->
@@ -2348,6 +2350,7 @@
    definition of the same <code class="highlight"><c- k>operator</c-><c- o>==</c-></code>, for a non-member non-template <code class="highlight"><c- k>operator</c-><c- o>==</c-></code>), you can still get rewrites.</p>
       </ul>
       <h2 class="heading settled" data-level="3" id="wording"><span class="secno">3. </span><span class="content">Wording</span><a class="self-link" href="#wording"></a></h2>
+      <p class="note" role="note"><span>Note:</span> we intend this wording to be merged as a DR against C++20.</p>
       <p>Change in 12.2.2.3 [over.match.oper] paragraph 3:</p>
       <blockquote>
        <p>The rewritten candidate set is determined as follows:</p>
@@ -2371,7 +2374,7 @@
         <li data-md>
          <p>For all other operators, the rewritten candidate set is empty.</p>
        </ul>
-       <ins>An operator== non-template function or function template F is a rewrite target with first operand o unless a search for the name operator!= in the scope S from the instantiation context of the operator expression finds a function or function template that would correspond ([basic.scope.scope]) to F if its name were operator==, where S is the scope of the class type of o if F is a class member, and the namespace scope of which F is a member otherwise. An operator== that is a function template specialization is a rewrite target if its function template is a rewrite target.<br></ins>
+       <ins>A non-template function or function template F named operator== is a rewrite target with first operand o unless a search for the name operator!= in the scope S from the instantiation context of the operator expression finds a function or function template that would correspond ([basic.scope.scope]) to F if its name were operator==, where S is the scope of the class type of o if F is a class member, and the namespace scope of which F is a member otherwise. A function template specialization named operator== is a rewrite target if its function template is a rewrite target.<br></ins>
        <ins>[Example:</ins>
       </blockquote>
    <pre class="language-c++ highlight"><c- k>struct</c-> <c- nc>A</c-> <c- p>{};</c->
@@ -2390,6 +2393,15 @@
    <c- p>};</c->
    <c- b>bool</c-> <c- n>c1</c-> <c- o>=</c-> <c- n>B</c-><c- p>()</c-> <c- o>==</c-> <c- n>C</c-><c- p>();</c->  <c- c1>// OK, calls #2; reversed #2 is not a candidate because search for operator!= in C finds #3</c->
    <c- b>bool</c-> <c- n>c2</c-> <c- o>=</c-> <c- n>C</c-><c- p>()</c-> <c- o>==</c-> <c- n>B</c-><c- p>();</c->  <c- c1>// error, ambiguous between #2 found when searching C and reversed #2 found when searching B</c->
+   
+   <c- k>struct</c-> <c- nc>D</c-> <c- p>{};</c->
+   <c- n>template</c-> <c- o>&lt;</c-><c- n>typename</c-> <c- n>T</c-><c- o>></c->
+   <c- b>bool</c-> <c- n>operator</c-><c- o>==</c-><c- p>(</c-><c- n>D</c-><c- p>,</c-> <c- n>T</c-><c- p>);</c-> <c- c1>// #4</c->
+   <c- kr>inline</c-> <c- n>namespace</c-> <c- n>N</c-> <c- p>{</c->
+       <c- n>template</c-> <c- o>&lt;</c-><c- n>typename</c-> <c- n>T</c-><c- o>></c->
+       <c- b>bool</c-> <c- n>operator</c-><c- o>!=</c-><c- p>(</c-><c- n>D</c-><c- p>,</c-> <c- n>T</c-><c- p>);</c-> <c- c1>// #5</c->
+   <c- p>}</c->
+   <c- b>bool</c-> <c- n>d1</c-> <c- o>=</c-> <c- mi>0</c-> <c- o>==</c-> <c- n>D</c-><c- p>();</c-> <c- c1>// OK, calls reversed #4; #5 does not forbid #4 as a rewrite target</c->
    </pre>
       <blockquote>
        <ins>-- end example]</ins>
@@ -2489,7 +2501,19 @@
    issues through diagnostics provided by the compiler or tooling.</p>
       <h2 class="heading settled" data-level="5" id="revision-history"><span class="secno">5. </span><span class="content">Revision History</span><a class="self-link" href="#revision-history"></a></h2>
       <h3 class="heading settled" data-level="5.1" id="revision-1"><span class="secno">5.1. </span><span class="content">Revision 1</span><a class="self-link" href="#revision-1"></a></h3>
-      <p>Refine "second resolution" / updated wording to reflect the new rule.</p>
+      <ul>
+       <li data-md>
+        <p>Refine "second resolution" / updated wording to reflect the new rule.</p>
+      </ul>
+      <h3 class="heading settled" data-level="5.2" id="revision-2"><span class="secno">5.2. </span><span class="content">Revision 2</span><a class="self-link" href="#revision-2"></a></h3>
+      <ul>
+       <li data-md>
+        <p>Wording changes as suggested in CWG at https://wiki.edg.com/bin/view/Wg21telecons2022/Teleconference2022-01-13?twiki_redirect_cache=5b60b829fb121fadf6474aaa8dceaf05</p>
+       <li data-md>
+        <p>Add reference to P1185R2 as the root cause</p>
+       <li data-md>
+        <p>Explicitly mention this is a DR to C++20</p>
+      </ul>
      </main>
    <script>
    (function() {

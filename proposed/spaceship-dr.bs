@@ -1,8 +1,8 @@
 <pre class='metadata'>
 Title: The Equality Operator You Are Looking For
-Shortname: P2468R1
-Revision: 1
-Date: 2021-12-15
+Shortname: P2468
+Revision: 2
+Date: 2022-1-13
 Editor: Barry Revzin, barry.revzin@gmail.com
 Editor: Bjarne Stroustrup, bjarne@stroustrup.com
 Editor: Cameron DaCamara, cadacama@microsoft.com
@@ -17,8 +17,8 @@ Abstract: This paper details some changes to make rewriting equality in expressi
 
 Status: P
 Group: wg21
-Audience: CWG
-URL: http://wg21.link/p2468r1
+Audience: EWG
+URL: http://wg21.link/p2468r2
 Markup Shorthands: markdown yes
 </pre>
 
@@ -27,6 +27,8 @@ Rewritten equality/inequality in expressions
 
 Compiler disagreements
 --------------------
+
+After the merge of P1185R2, C++20 changed the meaning of == and != expressions and how overload resolution applies to them.  The following was valid C++17 code:
 
 ```c++
 struct S {
@@ -283,6 +285,8 @@ Surprises and caveats:
 Wording
 ==================================
 
+Note: we intend this wording to be merged as a DR against C++20.
+
 Change in 12.2.2.3 [over.match.oper] paragraph 3:
 
 > The rewritten candidate set is determined as follows:
@@ -292,7 +296,7 @@ Change in 12.2.2.3 [over.match.oper] paragraph 3:
 > * For the equality operators, the rewritten candidates also include a synthesized candidate, with the order of the two parameters reversed, for each non-rewritten candidate for the expression y == x <ins>that is a rewrite target with first operand y</ins>.
 > * For all other operators, the rewritten candidate set is empty.
 >
-> <ins>An operator== non-template function or function template F is a rewrite target with first operand o unless a search for the name operator!= in the scope S from the instantiation context of the operator expression finds a function or function template that would correspond ([basic.scope.scope]) to F if its name were operator==, where S is the scope of the class type of o if F is a class member, and the namespace scope of which F is a member otherwise. An operator== that is a function template specialization is a rewrite target if its function template is a rewrite target.<br></ins>
+> <ins>A non-template function or function template F named operator== is a rewrite target with first operand o unless a search for the name operator!= in the scope S from the instantiation context of the operator expression finds a function or function template that would correspond ([basic.scope.scope]) to F if its name were operator==, where S is the scope of the class type of o if F is a class member, and the namespace scope of which F is a member otherwise. A function template specialization named operator== is a rewrite target if its function template is a rewrite target.<br></ins>
 > <ins>[Example:</ins>
 ```c++
 struct A {};
@@ -311,6 +315,15 @@ struct C : B {
 };
 bool c1 = B() == C();  // OK, calls #2; reversed #2 is not a candidate because search for operator!= in C finds #3
 bool c2 = C() == B();  // error, ambiguous between #2 found when searching C and reversed #2 found when searching B
+
+struct D {};
+template <typename T>
+bool operator==(D, T); // #4
+inline namespace N {
+    template <typename T>
+    bool operator!=(D, T); // #5
+}
+bool d1 = 0 == D(); // OK, calls reversed #4; #5 does not forbid #4 as a rewrite target
 ```
 > <ins>-- end example]</ins>
 
@@ -432,4 +445,11 @@ Revision History
 Revision 1
 --------------
 
-Refine "second resolution" / updated wording to reflect the new rule.
+* Refine "second resolution" / updated wording to reflect the new rule.
+
+Revision 2
+--------------
+
+* Wording changes as suggested in CWG at https://wiki.edg.com/bin/view/Wg21telecons2022/Teleconference2022-01-13?twiki_redirect_cache=5b60b829fb121fadf6474aaa8dceaf05
+* Add reference to P1185R2 as the root cause
+* Explicitly mention this is a DR to C++20
